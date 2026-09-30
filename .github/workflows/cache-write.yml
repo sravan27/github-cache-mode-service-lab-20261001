@@ -1,0 +1,16 @@
+name: Cache write-capable positive control
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions: {}
+    cache-mode: write
+    steps:
+      - name: Prepare synthetic marker
+        run: printf '%s\n' 'WRITE_POSITIVE_20261001' > payload.txt
+      - name: Save synthetic marker
+        uses: actions/cache/save@v4
+        with:
+          path: payload.txt
+          key: cache-mode-20261001-write-positive-v1

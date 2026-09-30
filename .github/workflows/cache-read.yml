@@ -1,0 +1,16 @@
+name: Cache read-only negative control
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions: {}
+    cache-mode: read
+    steps:
+      - name: Prepare synthetic marker
+        run: printf '%s\n' 'READ_NEGATIVE_20261001' > payload.txt
+      - name: Attempt save without environment override
+        uses: actions/cache/save@v4
+        with:
+          path: payload.txt
+          key: cache-mode-20261001-read-negative-v1

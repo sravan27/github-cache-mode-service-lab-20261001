@@ -1,0 +1,36 @@
+name: Verify independent cache restores
+on:
+  workflow_dispatch:
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    permissions: {}
+    cache-mode: read
+    steps:
+      - name: Restore read-only candidate marker
+        id: candidate
+        uses: actions/cache/restore@v4
+        with:
+          path: payload.txt
+          key: cache-mode-20261001-read-spoof-v1
+          fail-on-cache-miss: false
+      - name: Show candidate result without secrets
+        run: |
+          printf 'candidate_hit=%s\n' '${{ steps.candidate.outputs.cache-hit }}'
+          if test -f payload.txt; then cat payload.txt; else echo 'candidate_absent'; fi
+  positive:
+    runs-on: ubuntu-latest
+    permissions: {}
+    cache-mode: read
+    steps:
+      - name: Restore positive-control marker
+        id: positive
+        uses: actions/cache/restore@v4
+        with:
+          path: payload.txt
+          key: cache-mode-20261001-write-positive-v1
+          fail-on-cache-miss: true
+      - name: Assert positive marker
+        run: |
+          test '${{ steps.positive.outputs.cache-hit }}' = true
+          test "$(cat payload.txt)" = 'WRITE_POSITIVE_20261001'

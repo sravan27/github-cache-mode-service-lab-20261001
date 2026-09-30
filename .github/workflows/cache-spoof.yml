@@ -1,0 +1,18 @@
+name: Cache read-only environment-spoof candidate
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions: {}
+    cache-mode: read
+    steps:
+      - name: Prepare synthetic marker
+        run: printf '%s\n' 'READ_SPOOF_20261001' > payload.txt
+      - name: Attempt save with spoofed action-layer mode
+        uses: actions/cache/save@v4
+        env:
+          ACTIONS_CACHE_MODE: write
+        with:
+          path: payload.txt
+          key: cache-mode-20261001-read-spoof-v1
